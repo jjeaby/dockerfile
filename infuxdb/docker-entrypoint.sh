@@ -1,5 +1,4 @@
 #!/bin/bash
-#cd /var/lib/influxdb/influxdb-ui
 
 # service grafana-server start
 ### NOT starting grafana-server by default on bootup, please execute
