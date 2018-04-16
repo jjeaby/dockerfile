@@ -1,27 +1,32 @@
 FROM influxdb:latest
+MAINTAINER Lee YongJin <jjeaby@gmail.com>
 
 # Run upgrades
 RUN apt-get update
-RUN apt-get install -f
 
-# Install basic packages
+# Time Zone Setting
+RUN ln -snf /usr/share/zoneinfo/Asia/Seoul /etc/localtime && \
+    echo "Asia/Seoul" > /etc/timezone
+ 
+ # Install basic packages
 WORKDIR /opt
+
+# default package install 
+RUN apt-get -y install git curl build-essential  libfontconfig vim 
 
 
 # influxdb install
-RUN apt-get -y install git curl build-essential  libfontconfig vim
 RUN curl -sL https://deb.nodesource.com/setup_8.x | bash -
 RUN apt-get install -y nodejs
 RUN npm install -U npm
 RUN npm install yarn --global
 
-RUN git clone https://github.com/danesparza/influxdb-ui
-
+RUN git clone https://github.com/jjeaby/influxdb-ui
 WORKDIR /opt/influxdb-ui
 RUN yarn install
 
 # grafana install 
-WORKDIR /opt
+# WORKDIR /opt
 # RUN wget https://s3-us-west-2.amazonaws.com/grafana-releases/release/grafana-5.0.4.linux-x64.tar.gz 
 # RUN tar -zxvf grafana-5.0.4.linux-x64.tar.gz 
 
@@ -29,18 +34,16 @@ WORKDIR /opt
 # RUN apt-get install -y adduser libfontconfig
 # RUN dpkg -i grafana_5.0.4_amd64.deb
 
-RUN echo "deb https://packagecloud.io/grafana/stable/debian/ jessie main" >> /etc/apt/sources.list
+RUN echo "deb https://packagecloud.io/grafana/stable/debian/ jessie main" \ 
+    >> /etc/apt/sources.list
 RUN curl https://packagecloud.io/gpg.key | apt-key add -
 
 RUN apt-get update
-RUN apt-get install -f 
-RUN apt-get install grafana
+RUN apt-get install grafana -y
 
 COPY ./docker-entrypoint.sh /
 ENTRYPOINT ["/docker-entrypoint.sh"]
 RUN ls
 
 
-EXPOSE 8083 8086 3000 4000
-# docker build --tag influxdb:jjeaby .
-# docker run --name influxdb-jjeaby -d -p 8086:8086 -p 3000:3000 -p 4000:4000 -v /opt/influxDB:/var/lib/influxdb influxdb:jjeaby
+EXPOSE 8083 8086 3000 
