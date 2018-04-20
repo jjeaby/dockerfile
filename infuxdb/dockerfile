@@ -46,7 +46,7 @@ RUN grafana-cli plugins install briangann-gauge-panel
 
 COPY ./docker-entrypoint.sh /
 ENTRYPOINT ["/docker-entrypoint.sh"]
-RUN ls
+#RUN ls
 
 
 EXPOSE 8083 8086 3000 4000
